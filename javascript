@@ -1,42 +1,71 @@
-// Controle de Login
-document.getElementById('loginForm').addEventListener('submit', function(e) {
+/ Controle de navegação
+function showRecovery() {
+    document.getElementById('loginContainer').classList.add('hidden');
+    document.getElementById('recoveryContainer').classList.remove('hidden');
+}
+
+function showLogin() {
+    document.getElementById('recoveryContainer').classList.add('hidden');
+    document.getElementById('loginContainer').classList.remove('hidden');
+}
+
+// Controle de login
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const userData = {
+        email: document.getElementById('email').value,
+        senha: document.getElementById('senha').value,
+        telefone: document.getElementById('telefone').value
+    };
 
-    // Validação simples (em sistema real usar autenticação segura)
-    if(username === 'ecousuario' && password === 'eco123') {
-        document.getElementById('loginSection').classList.remove('active');
-        document.getElementById('exchangeSection').classList.add('active');
-        document.getElementById('loginError').textContent = '';
-    } else {
-        document.getElementById('loginError').textContent = 'Credenciais inválidas! Tente novamente.';
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(userData)
+        });
+
+        const data = await response.json();
+        
+        if(response.ok) {
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+        } else {
+            alert(data.message);
+        }
+    } catch (error) {
+        alert('Erro na conexão');
     }
 });
 
-// Sistema de Troca
-document.getElementById('exchangeForm').addEventListener('submit', function(e) {
+// Recuperação de senha
+document.getElementById('recoveryForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    const oilAmount = document.getElementById('oilAmount').value;
-    const soapAmount = oilAmount; // 1:1
-    
-    const resultHTML = `
-        <h3>Troca Confirmada! ♻️</h3>
-        <p>Você está trocando: ${oilAmount}L de óleo</p>
-        <p>Você receberá: ${soapAmount} barras de sabão ecológico</p>
-        <p>Data da retirada: ${new Date().toLocaleDateString()}</p>
-    `;
-    
-    document.getElementById('exchangeResult').innerHTML = resultHTML;
+    const email = document.getElementById('recoveryEmail').value;
+
+    try {
+        const response = await fetch('/recovery', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+        });
+
+        const data = await response.json();
+        alert(data.message);
+    } catch (error) {
+        alert('Erro na conexão');
+    }
 });
 
 // Logout
 function logout() {
-    document.getElementById('exchangeSection').classList.remove('active');
-    document.getElementById('loginSection').classList.add('active');
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('loginContainer').classList.remove('hidden');
     document.getElementById('loginForm').reset();
-    document.getElementById('exchangeForm').reset();
-    document.getElementById('exchangeResult').innerHTML = '';
 }
