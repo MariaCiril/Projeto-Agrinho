@@ -3,53 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoTroca - Óleo por Sabão</title>
-    <link rel="stylesheet" href="style.css">
+    <title>EcoTroca - Login</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #e8f5e9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h1 {
+            color: #2e7d32;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border: 2px solid #c8e6c9;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background: #1b5e20;
+        }
+
+        .error {
+            color: #c62828;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Seção de Login -->
-        <div class="login-box active" id="loginSection">
-            <img src="eco-logo.png" alt="Logo EcoTroca" class="logo">
-            <h2>Login do Sistema</h2>
-            <form id="loginForm">
-                <div class="input-group">
-                    <label for="username">Usuário:</label>
-                    <input type="text" id="username" required>
-                </div>
-                <div class="input-group">
-                    <label for="password">Senha:</label>
-                    <input type="password" id="password" required>
-                </div>
-                <button type="submit" class="btn">Acessar</button>
-            </form>
-            <div class="error-msg" id="loginError"></div>
-        </div>
-
-        <!-- Seção de Troca -->
-        <div class="exchange-box" id="exchangeSection">
-            <div class="header">
-                <h1>Troca Ecológica</h1>
-                <button class="logout-btn" onclick="logout()">Sair</button>
+    <!-- Tela de Login -->
+    <div class="login-container" id="loginContainer">
+        <h1>Login EcoTroca</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <input type="text" id="username" placeholder="Usuário" required>
             </div>
-            
-            <div class="exchange-info">
-                <p>1 Litro de Óleo = 1 Barra de Sabão</p>
-                <img src="oil-to-soap.png" alt="Troca Ecológica" class="exchange-img">
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Senha" required>
             </div>
+            <button type="submit">Entrar</button>
+        </form>
+        <div id="errorMessage" class="error"></div>
+    </div>
 
-            <form id="exchangeForm">
-                <div class="input-group">
-                    <label for="oilAmount">Quantidade de Óleo (litros):</label>
-                    <input type="number" id="oilAmount" min="1" required>
-                </div>
-                <button type="submit" class="btn">Calcular Troca</button>
-            </form>
-
-            <div class="result-box" id="exchangeResult"></div>
+    <!-- Tela de Troca (inicialmente escondida) -->
+    <div class="login-container hidden" id="exchangeContainer">
+        <h1>Trocar Óleo por Sabão</h1>
+        <div class="form-group">
+            <p style="text-align: center; margin-bottom: 1rem;">
+                1 Litro = 1 Barra de Sabão
+            </p>
+            <input type="number" id="litros" placeholder="Litros de óleo" min="1">
+            <button onclick="calcularTroca()">Calcular Troca</button>
+            <div id="resultado" style="margin-top: 1rem; text-align: center;"></div>
+            <button onclick="logout()" style="background: #c62828; margin-top: 2rem;">Sair</button>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // Função de Login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Credenciais válidas (usuário: eco, senha: 123)
+            if(username === 'eco' && password === '123') {
+                document.getElementById('loginContainer').classList.add('hidden');
+                document.getElementById('exchangeContainer').classList.remove('hidden');
+                document.getElementById('errorMessage').textContent = '';
+            } else {
+                document.getElementById('errorMessage').textContent = 'Usuário ou senha incorretos!';
+            }
+        });
+
+        // Função de Troca
+        function calcularTroca() {
+            const litros = document.getElementById('litros').value;
+            if(litros > 0) {
+                document.getElementById('resultado').innerHTML = `
+                    <p>Você receberá: ${litros} barras de sabão</p>
+                    <p>Apresente este código na coleta: #${Math.floor(1000 + Math.random() * 9000)}</p>
+                `;
+            }
+        }
+
+        // Função de Logout
+        function logout() {
+            document.getElementById('loginContainer').classList.remove('hidden');
+            document.getElementById('exchangeContainer').classList.add('hidden');
+            document.getElementById('loginForm').reset();
+            document.getElementById('litros').value = '';
+            document.getElementById('resultado').innerHTML = '';
+        }
+    </script>
 </body>
 </html>
