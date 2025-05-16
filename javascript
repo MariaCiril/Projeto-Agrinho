@@ -1,71 +1,47 @@
-/ Controle de navegação
-function showRecovery() {
-    document.getElementById('loginContainer').classList.add('hidden');
-    document.getElementById('recoveryContainer').classList.remove('hidden');
-}
-
-function showLogin() {
-    document.getElementById('recoveryContainer').classList.add('hidden');
-    document.getElementById('loginContainer').classList.remove('hidden');
-}
-
-// Controle de login
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const userData = {
-        email: document.getElementById('email').value,
-        senha: document.getElementById('senha').value,
-        telefone: document.getElementById('telefone').value
-    };
-
-    try {
-        const response = await fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(userData)
+  <script>
+        // Controle de Login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('chatSection').classList.remove('hidden');
         });
 
-        const data = await response.json();
-        
-        if(response.ok) {
-            document.getElementById('loginContainer').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
-        } else {
-            alert(data.message);
+        // Recuperação de Senha
+        document.getElementById('recoveryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Link de recuperação enviado!');
+            showLogin();
+        });
+
+        // Controle de Chat
+        let selectedUser = null;
+
+        function showRecovery() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('recoveryForm').classList.remove('hidden');
         }
-    } catch (error) {
-        alert('Erro na conexão');
-    }
-});
 
-// Recuperação de senha
-document.getElementById('recoveryForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    const email = document.getElementById('recoveryEmail').value;
+        function showLogin() {
+            document.getElementById('recoveryForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        }
 
-    try {
-        const response = await fetch('/recovery', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email })
-        });
+        function selectUser(userId) {
+            selectedUser = userId;
+            // Implementar lógica para carregar chat privado
+        }
 
-        const data = await response.json();
-        alert(data.message);
-    } catch (error) {
-        alert('Erro na conexão');
-    }
-});
-
-// Logout
-function logout() {
-    document.getElementById('dashboard').classList.add('hidden');
-    document.getElementById('loginContainer').classList.remove('hidden');
-    document.getElementById('loginForm').reset();
-}
+        function sendMessage() {
+            const message = document.getElementById('messageText').value;
+            if(message.trim()) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message';
+                messageDiv.textContent = selectedUser ? 
+                    `[Privado] ${message}` : 
+                    `[Público] ${message}`;
+                
+                document.getElementById('chatMessages').appendChild(messageDiv);
+                document.getElementById('messageText').value = '';
+            }
+        }
+    </script>
