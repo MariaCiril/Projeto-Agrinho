@@ -45,3 +45,234 @@
     <script src="/static/script.js"></script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Ecológico</title>
+    <style>
+        /* Estilos Gerais */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f0f4f7;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        /* Tela de Login */
+        .login-box {
+            width: 400px;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Tela de Chat */
+        .chat-container {
+            display: flex;
+            height: 100%;
+        }
+
+        .sidebar {
+            width: 250px;
+            border-right: 1px solid #ddd;
+            padding: 1rem;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .message-composer {
+            padding: 1rem;
+            border-top: 1px solid #ddd;
+        }
+
+        .user-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .user-item {
+            padding: 0.5rem;
+            cursor: pointer;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background: #f0f4f7;
+            border-radius: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Tela de Login -->
+    <div class="login-box" id="loginContainer">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="email" placeholder="E-mail" required>
+            <input type="password" placeholder="Senha" required>
+            <input type="tel" placeholder="Telefone">
+            <button type="submit">Entrar</button>
+            <a href="#" onclick="showRecovery()">Esqueci minha senha</a>
+        </form>
+    </div>
+
+    <!-- Tela de Chat -->
+    <div class="container" id="chatContainer">
+        <div class="chat-container">
+            <div class="sidebar">
+                <h3>Usuários Online</h3>
+                <ul class="user-list" id="userList"></ul>
+                <button onclick="createPrivateChat()">Novo Chat Privado</button>
+            </div>
+            
+            <div class="chat-main">
+                <div class="chat-tabs">
+                    <button onclick="switchTab('public')">Chat Público</button>
+                    <button onclick="switchTab('private')">Chat Privado</button>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages"></div>
+                
+                <div class="message-composer">
+                    <input type="text" id="messageInput" placeholder="Digite sua mensagem">
+                    <input type="file" id="imageUpload" accept="image/*">
+                    <button onclick="sendMessage()">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Controle de Login Simulado
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            document.getElementById('loginContainer').classList.add('hidden');
+            document.getElementById('chatContainer').style.display = 'block';
+            initChat();
+        });
+
+        // Sistema de Chat
+        let currentTab = 'public';
+        let privateChats = {};
+        
+        function initChat() {
+            // Simular conexão WebSocket
+            setInterval(() => {
+                document.getElementById('userList').innerHTML = `
+                    <li class="user-item">Usuário 1</li>
+                    <li class="user-item">Usuário 2</li>
+                    <li class="user-item">Usuário 3</li>
+                `;
+            }, 1000);
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            // Atualizar mensagens conforme a aba selecionada
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value;
+            const file = document.getElementById('imageUpload').files[0];
+            
+            if(message || file) {
+                const messageElement = document.createElement('div');
+                messageElement.className = 'message';
+                
+                if(file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        messageElement.innerHTML = `
+                            <img src="${e.target.result}" style="max-width: 200px; cursor: pointer;" 
+                                 onclick="showImageModal('${e.target.result}')">
+                        `;
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    messageElement.textContent = message;
+                }
+                
+                document.getElementById('chatMessages').appendChild(messageElement);
+                input.value = '';
+            }
+        }
+
+        function showImageModal(src) {
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.background = 'rgba(0,0,0,0.8)';
+            modal.style.display = 'flex';
+            modal.style.justifyContent = 'center';
+            modal.style.alignItems = 'center';
+            modal.innerHTML = `<img src="${src}" style="max-width: 90%; max-height: 90%;">`;
+            modal.onclick = () => document.body.removeChild(modal);
+            document.body.appendChild(modal);
+        }
+
+        function createPrivateChat() {
+            // Implementar lógica para chat privado
+        }
+    </script>
+
+    <!-- Backend Python (app.py) -->
+    <!--
+    from flask import Flask, render_template
+    from flask_socketio import SocketIO
+
+    app = Flask(__name__)
+    socketio = SocketIO(app)
+
+    @app.route('/')
+    def index():
+        return render_template('index.html')
+
+    @socketio.on('message')
+    def handle_message(data):
+        # Lógica para enviar mensagens
+        socketio.emit('message', data)
+
+    if __name__ == '__main__':
+        socketio.run(app)
+    -->
+</body>
+</html>
