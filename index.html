@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTroca - Óleo por Sabão</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Seção de Login -->
+        <div class="login-box active" id="loginSection">
+            <img src="eco-logo.png" alt="Logo EcoTroca" class="logo">
+            <h2>Login do Sistema</h2>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label for="username">Usuário:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Senha:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn">Acessar</button>
+            </form>
+            <div class="error-msg" id="loginError"></div>
+        </div>
+
+        <!-- Seção de Troca -->
+        <div class="exchange-box" id="exchangeSection">
+            <div class="header">
+                <h1>Troca Ecológica</h1>
+                <button class="logout-btn" onclick="logout()">Sair</button>
+            </div>
+            
+            <div class="exchange-info">
+                <p>1 Litro de Óleo = 1 Barra de Sabão</p>
+                <img src="oil-to-soap.png" alt="Troca Ecológica" class="exchange-img">
+            </div>
+
+            <form id="exchangeForm">
+                <div class="input-group">
+                    <label for="oilAmount">Quantidade de Óleo (litros):</label>
+                    <input type="number" id="oilAmount" min="1" required>
+                </div>
+                <button type="submit" class="btn">Calcular Troca</button>
+            </form>
+
+            <div class="result-box" id="exchangeResult"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
