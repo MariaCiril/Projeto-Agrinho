@@ -3,143 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoTroca - Login</title>
+    <title>Sistema de Troca Ecológica</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-
         body {
-            background: #e8f5e9;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f4f7;
         }
 
-        .login-container {
+        .container {
             background: white;
             padding: 2rem;
             border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-
-        h1 {
-            color: #2e7d32;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 300px;
             text-align: center;
-            margin-bottom: 1.5rem;
         }
 
-        .form-group {
-            margin-bottom: 1rem;
+        .hidden {
+            display: none;
         }
 
         input {
             width: 100%;
             padding: 0.8rem;
             margin: 0.5rem 0;
-            border: 2px solid #c8e6c9;
-            border-radius: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
 
         button {
             width: 100%;
             padding: 0.8rem;
-            background: #2e7d32;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
             margin-top: 1rem;
         }
 
-        button:hover {
-            background: #1b5e20;
+        .login-btn {
+            background-color: #2ecc71;
+        }
+
+        .forgot-btn {
+            background-color: #3498db;
+            width: auto;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background-color: #e74c3c;
         }
 
         .error {
-            color: #c62828;
-            text-align: center;
+            color: red;
             margin-top: 1rem;
         }
 
-        .hidden {
-            display: none;
+        .hint {
+            color: #2ecc71;
+            margin-top: 1rem;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
     <!-- Tela de Login -->
-    <div class="login-container" id="loginContainer">
-        <h1>Login EcoTroca</h1>
+    <div class="container" id="loginContainer">
+        <h2>Login</h2>
         <form id="loginForm">
-            <div class="form-group">
-                <input type="text" id="username" placeholder="Usuário" required>
-            </div>
-            <div class="form-group">
-                <input type="password" id="password" placeholder="Senha" required>
-            </div>
-            <button type="submit">Entrar</button>
+            <input type="text" id="username" placeholder="Usuário" required>
+            <input type="password" id="password" placeholder="Senha" required>
+            <button type="submit" class="login-btn">Entrar</button>
         </form>
+        <button class="forgot-btn" onclick="showHint()">Esqueci minha senha</button>
         <div id="errorMessage" class="error"></div>
+        <div id="passwordHint" class="hint hidden"></div>
     </div>
 
-    <!-- Tela de Troca (inicialmente escondida) -->
-    <div class="login-container hidden" id="exchangeContainer">
-        <h1>Trocar Óleo por Sabão</h1>
-        <div class="form-group">
-            <p style="text-align: center; margin-bottom: 1rem;">
-                1 Litro = 1 Barra de Sabão
-            </p>
-            <input type="number" id="litros" placeholder="Litros de óleo" min="1">
-            <button onclick="calcularTroca()">Calcular Troca</button>
-            <div id="resultado" style="margin-top: 1rem; text-align: center;"></div>
-            <button onclick="logout()" style="background: #c62828; margin-top: 2rem;">Sair</button>
-        </div>
+    <!-- Tela de Troca -->
+    <div class="container hidden" id="exchangeContainer">
+        <h2>Troca Ecológica</h2>
+        <p>1 litro de óleo = 1 sabão</p>
+        <input type="number" id="litros" placeholder="Litros de óleo" min="1">
+        <button class="login-btn" onclick="calcularTroca()">Calcular</button>
+        <div id="resultado"></div>
+        <button class="logout-btn" onclick="logout()">Sair</button>
     </div>
 
     <script>
+        // Dados de usuário (simulado)
+        const userData = {
+            username: 'eco',
+            password: '123',
+            hint: 'Dica: Sua senha é um número curto'
+        };
+
         // Função de Login
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            // Credenciais válidas (usuário: eco, senha: 123)
-            if(username === 'eco' && password === '123') {
-                document.getElementById('loginContainer').classList.add('hidden');
-                document.getElementById('exchangeContainer').classList.remove('hidden');
-                document.getElementById('errorMessage').textContent = '';
-            } else {
-                document.getElementById('errorMessage').textContent = 'Usuário ou senha incorretos!';
-            }
-        });
-
-        // Função de Troca
-        function calcularTroca() {
-            const litros = document.getElementById('litros').value;
-            if(litros > 0) {
-                document.getElementById('resultado').innerHTML = `
-                    <p>Você receberá: ${litros} barras de sabão</p>
-                    <p>Apresente este código na coleta: #${Math.floor(1000 + Math.random() * 9000)}</p>
-                `;
-            }
-        }
-
-        // Função de Logout
-        function logout() {
-            document.getElementById('loginContainer').classList.remove('hidden');
-            document.getElementById('exchangeContainer').classList.add('hidden');
-            document.getElementById('loginForm').reset();
-            document.getElementById('litros').value = '';
-            document.getElementById('resultado').innerHTML = '';
-        }
-    </script>
-</body>
-</html>
+            const username = document
